@@ -5,7 +5,7 @@
 "=============================================================================
 
 function! vfiler_fzf#sink(condidate) abort
-  echom a:condidate
+  call luaeval('require"vfiler/fzf/action".sink(_A)', a:condidate)
 endfunction
 
 function! vfiler_fzf#files(options) abort
