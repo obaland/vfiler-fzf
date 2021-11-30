@@ -1,0 +1,38 @@
+*vfiler-fzf.txt* 
+
+==============================================================================
+INTRODUCTION                                         *vfiler-fzf-introduction*
+
+An extension plugin for working with FZF on vfiler.vim.
+
+------------------------------------------------------------------------------
+INSTALLATION                                         *vfiler-fzf-installation*
+
+>
+  Plug 'junegunn/fzf', {'do': {-> fzf#install()}}
+  Plug 'junegunn/fzf.vim'
+  Plug 'obaland/vfiler.vim'
+  Plug 'obaland/vfiler-fzf'
+
+  
+After installation, specify the action for any mapping in vfiler.vim.
+
+>
+  local fzf_action = require'vfiler/fzf/action'
+  require'vfiler/config'.setup {
+    mappings = {
+      ['f'] = fzf_action.files
+    },
+  }
+
+
+==============================================================================
+ACTIONS                                                   *vfiler-fzf-actions*
+
+files                                               *vfiler-fzf-actions-files*
+grep                                                 *vfiler-fzf-actions-grep*
+ag                                                     *vfiler-fzf-actions-ag*
+rg                                                     *vfiler-fzf-actions-rg*
+
+==============================================================================
+vim:ft=help:norl:ts=8:tw=78:
