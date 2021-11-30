@@ -1,5 +1,6 @@
-# vfiler-fzf
-fzf :heart: vfiler.vim
+# fzf :heart: vfiler.vim
+
+An extension plugin for working with [FZF](https://github.com/junegunn/fzf) on [vfiler.vim](https://github.com/obaland/vfiler.vim).
 
 ## Instalattion
 
@@ -22,7 +23,7 @@ require'vfiler/config'.setup {
 }
 ```
 
-## Support actionsn
+## Support actions
 - files
 - grep
 - ag
