@@ -1,9 +1,9 @@
-local vim = require 'vfiler/vim'
-local cmdline = require 'vfiler/cmdline'
-local config = require 'vfiler/fzf/config'
-local core = require 'vfiler/core'
+local vim = require('vfiler/vim')
+local cmdline = require('vfiler/cmdline')
+local config = require('vfiler/fzf/config')
+local core = require('vfiler/core')
 
-local VFiler = require 'vfiler/vfiler'
+local VFiler = require('vfiler/vfiler')
 
 local M = {}
 
@@ -47,8 +47,8 @@ local function fzf_options()
   return options
 end
 
-local function get_current_dirpath(vfiler)
-  local item = vfiler.view:get_current()
+local function get_current_dirpath(view)
+  local item = view:get_current()
   return item.isdirectory and item.path or item.parent.path
 end
 
@@ -60,10 +60,6 @@ end
 -- Internal interfaces
 
 function M._sink(key, condidate)
-  for k, action in pairs(config.configs.action) do
-    print(k, action)
-  end
-
   local action = config.configs.action[key]
   if not action then
     core.message.error('No action has been set for "configs.action".')
@@ -75,7 +71,9 @@ function M._sink(key, condidate)
     vim.command(action .. ' ' .. path)
   elseif type(action) == 'function' then
     local current = VFiler.get_current()
-    action(current, path)
+    current:do_action(function(filer, context, view)
+      action(filer, context, view, path)
+    end)
   else
     core.message.error('Action "%s" is no supported.', key)
   end
@@ -86,7 +84,7 @@ end
 --
 
 ---  fzf Ag
-function M.ag(vfiler)
+function M.ag(vfiler, context, view)
   if vim.fn.executable('ag') == 0 then
     core.message.error('Not found "ag" command.')
     return
@@ -97,12 +95,12 @@ function M.ag(vfiler)
     return
   end
   local fzf_opts = fzf_options()
-  local dirpath = get_current_dirpath(vfiler)
+  local dirpath = get_current_dirpath(view)
   vim.fn['vfiler#fzf#ag'](dirpath, fzf_opts)
 end
 
 ---  fzf Grep
-function M.grep(vfiler)
+function M.grep(vfiler, context, view)
   if vim.fn.executable('grep') == 0 then
     core.message.error('Not found "grep" command.')
     return
@@ -113,19 +111,19 @@ function M.grep(vfiler)
     return
   end
   local fzf_opts = fzf_options()
-  local dirpath = get_current_dirpath(vfiler)
+  local dirpath = get_current_dirpath(view)
   vim.fn['vfiler#fzf#grep'](dirpath, fzf_opts)
 end
 
 ---  fzf Files
-function M.files(vfiler)
+function M.files(vfiler, context, view)
   local fzf_opts = fzf_options()
-  local dirpath = get_current_dirpath(vfiler)
+  local dirpath = get_current_dirpath(view)
   vim.fn['vfiler#fzf#files'](dirpath, fzf_opts)
 end
 
 ---  fzf Rg
-function M.rg(vfiler)
+function M.rg(vfiler, context, view)
   if vim.fn.executable('rg') == 0 then
     core.message.error('Not found "rg" command.')
     return
@@ -136,7 +134,7 @@ function M.rg(vfiler)
     return
   end
   local fzf_opts = fzf_options()
-  local dirpath = get_current_dirpath(vfiler)
+  local dirpath = get_current_dirpath(view)
   vim.fn['vfiler#fzf#rg'](dirpath, fzf_opts)
 end
 

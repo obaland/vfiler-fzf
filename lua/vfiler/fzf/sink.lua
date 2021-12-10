@@ -5,24 +5,24 @@ local VFiler = require 'vfiler/vfiler'
 
 local M = {}
 
-function M.open(vfiler, path)
-  action.open_file(vfiler, path, 'edit')
+function M.open(vfiler, context, view, path)
+  action.open_file(vfiler, context, view, path, 'edit')
 end
 
-function M.open_by_split(vfiler, path)
-  action.open_file(vfiler, path, 'bottom')
+function M.open_by_split(vfiler, context, view, path)
+  action.open_file(vfiler, context, view, path, 'bottom')
 end
 
-function M.open_by_vsplit(vfiler, path)
-  action.open_file(vfiler, path, 'right')
+function M.open_by_vsplit(vfiler, context, view, path)
+  action.open_file(vfiler, context, view, path, 'right')
 end
 
-function M.open_by_tabpage(vfiler, path)
-  action.open_file(vfiler, path, 'tab')
+function M.open_by_tabpage(vfiler, context, view, path)
+  action.open_file(vfiler, context, view, path, 'tab')
 end
 
-function M.open_by_choose(vfiler, path)
-  action.open_file(vfiler, path, 'choose')
+function M.open_by_choose(vfiler, context, view, path)
+  action.open_file(vfiler, context, view, path, 'choose')
 end
 
 return M
