@@ -1,7 +1,4 @@
-local action = require 'vfiler/action'
-local vim = require 'vfiler/vim'
-
-local VFiler = require 'vfiler/vfiler'
+local action = require('vfiler/action')
 
 local M = {}
 

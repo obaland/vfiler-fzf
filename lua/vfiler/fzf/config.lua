@@ -1,5 +1,5 @@
-local core = require 'vfiler/core'
-local sink = require 'vfiler/fzf/sink'
+local core = require('vfiler/core')
+local sink = require('vfiler/fzf/sink')
 
 local M = {}
 

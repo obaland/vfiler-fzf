@@ -49,7 +49,12 @@ end
 
 local function get_current_dirpath(view)
   local item = view:get_current()
-  return item.isdirectory and item.path or item.parent.path
+  local path = item.isdirectory and item.path or item.parent.path
+  local slash = '/'
+  if core.is_windows and not vim.get_global_option('shellslash') then
+    slash = '\\'
+  end
+  return path:gsub('[/\\]', slash)
 end
 
 local function input_pattern()
