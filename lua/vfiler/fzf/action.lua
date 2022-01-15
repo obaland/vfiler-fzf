@@ -1,7 +1,7 @@
-local vim = require('vfiler/vim')
-local cmdline = require('vfiler/cmdline')
+local cmdline = require('vfiler/libs/cmdline')
 local config = require('vfiler/fzf/config')
-local core = require('vfiler/core')
+local core = require('vfiler/libs/core')
+local vim = require('vfiler/libs/vim')
 
 local VFiler = require('vfiler/vfiler')
 
