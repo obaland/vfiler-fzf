@@ -15,6 +15,7 @@ function! vfiler#fzf#sink(condidate) abort
     endif
     return
   endif
+  let w:vfiler_fzf_key = ''
   call luaeval(
         \ 'require"vfiler/fzf/action"._sink(_A.key, _A.condidate)',
         \ {'key': l:key, 'condidate': a:condidate}
