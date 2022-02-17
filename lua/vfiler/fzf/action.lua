@@ -9,14 +9,14 @@ local M = {}
 
 local function fzf_options()
   local configs = config.configs
-  local options = vim.to_vimdict({})
+  local options = vim.dict({})
   options.options = ''
 
   -- Layout
   if configs.layout then
     for key, value in pairs(configs.layout) do
       if type(value) == 'table' then
-        options[key] = vim.to_vimdict(value)
+        options[key] = vim.dict(value)
       else
         options[key] = value
       end
@@ -51,7 +51,7 @@ local function get_current_dirpath(view)
   local item = view:get_current()
   local path = item.isdirectory and item.path or item.parent.path
   local slash = '/'
-  if core.is_windows and not vim.get_global_option('shellslash') then
+  if core.is_windows and not vim.get_option('shellslash') then
     slash = '\\'
   end
   return path:gsub('[/\\]', slash)
