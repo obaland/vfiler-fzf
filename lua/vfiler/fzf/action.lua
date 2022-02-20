@@ -48,7 +48,7 @@ local function fzf_options()
 end
 
 local function get_current_dirpath(view)
-  local item = view:get_current()
+  local item = view:get_item()
   local path = item.isdirectory and item.path or item.parent.path
   local slash = '/'
   if core.is_windows and not vim.get_option('shellslash') then
@@ -75,7 +75,7 @@ function M._sink(key, condidate)
   if type(action) == 'string' then
     vim.command(action .. ' ' .. path)
   elseif type(action) == 'function' then
-    local current = VFiler.get_current()
+    local current = VFiler.get()
     current:do_action(function(filer, context, view)
       action(filer, context, view, path)
     end)
