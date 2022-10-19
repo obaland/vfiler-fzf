@@ -4,6 +4,7 @@ local core = require('vfiler/libs/core')
 local vim = require('vfiler/libs/vim')
 
 local VFiler = require('vfiler/vfiler')
+local Context = require('vfiler/context')
 
 local M = {}
 
@@ -57,6 +58,21 @@ local function get_current_dirpath(view)
   return path:gsub('[/\\]', slash)
 end
 
+local function execute(func, vfiler, view)
+  local fzf_opts = fzf_options()
+  local dirpath = get_current_dirpath(view)
+
+  -- The vfiler's floating window automatically closes on buffer Leave.
+  -- Therefore, there will be no window to return to after executing fzf,
+  -- resulting in an error.
+  -- To avoid this, delete the window before executing fzf.
+  if view:type() == 'floating' then
+    vfiler:wipeout()
+  end
+
+  vim.fn[func](dirpath, fzf_opts)
+end
+
 local function input_pattern()
   return cmdline.input('Pattern?')
 end
@@ -76,9 +92,20 @@ function M._sink(key, condidate)
     vim.command(action .. ' ' .. path)
   elseif type(action) == 'function' then
     local current = VFiler.get()
-    current:do_action(function(filer, context, view)
-      action(filer, context, view, path)
-    end)
+    if current then
+      current:do_action(function(filer, context, view)
+        action(filer, context, view, path)
+      end)
+    else
+      -- If the vfiler object does not exist,
+      -- a dummy vfiler with default settings is generated.
+      local dummy_ctx = Context.new(require('vfiler/config').configs)
+      local dummy_filer = VFiler.new(dummy_ctx)
+      dummy_filer:do_action(function(filer, context, view)
+        action(filer, context, view, path)
+      end)
+      dummy_filer:wipeout()
+    end
   else
     core.message.error('Action "%s" is no supported.', key)
   end
@@ -99,9 +126,7 @@ function M.ag(vfiler, context, view)
   if pattern == '' then
     return
   end
-  local fzf_opts = fzf_options()
-  local dirpath = get_current_dirpath(view)
-  vim.fn['vfiler#fzf#ag'](dirpath, fzf_opts)
+  execute('vfiler#fzf#ag', vfiler, view)
 end
 
 ---  fzf Grep
@@ -115,16 +140,12 @@ function M.grep(vfiler, context, view)
   if pattern == '' then
     return
   end
-  local fzf_opts = fzf_options()
-  local dirpath = get_current_dirpath(view)
-  vim.fn['vfiler#fzf#grep'](dirpath, fzf_opts)
+  execute('vfiler#fzf#grep', vfiler, view)
 end
 
 ---  fzf Files
 function M.files(vfiler, context, view)
-  local fzf_opts = fzf_options()
-  local dirpath = get_current_dirpath(view)
-  vim.fn['vfiler#fzf#files'](dirpath, fzf_opts)
+  execute('vfiler#fzf#files', vfiler, view)
 end
 
 ---  fzf Rg
@@ -138,9 +159,7 @@ function M.rg(vfiler, context, view)
   if pattern == '' then
     return
   end
-  local fzf_opts = fzf_options()
-  local dirpath = get_current_dirpath(view)
-  vim.fn['vfiler#fzf#rg'](dirpath, fzf_opts)
+  execute('vfiler#fzf#rg', vfiler, view)
 end
 
 return M
