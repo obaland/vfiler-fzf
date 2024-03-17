@@ -77,6 +77,16 @@ local function input_pattern()
   return cmdline.input('Pattern?')
 end
 
+local function new_dummy_vfiler(root_path)
+  local ctx = Context.new(require('vfiler/config').configs)
+
+  -- NOTE: Generate only the root, which affects subsequent processing.
+  local fs = require('vfiler/libs/filesystem')
+  local Directory = require('vfiler/items/directory')
+  ctx.root = Directory.new(fs.stat(root_path))
+  return VFiler.new(ctx)
+end
+
 ------------------------------------------------------------------------------
 -- Internal interfaces
 
@@ -91,7 +101,7 @@ function M._sink(key, condidate)
   if type(action) == 'string' then
     vim.command(action .. ' ' .. path)
   elseif type(action) == 'function' then
-    local current = VFiler.get()
+    local current = VFiler.get(vim.fn.bufnr())
     if current then
       current:do_action(function(filer, context, view)
         action(filer, context, view, path)
@@ -99,12 +109,11 @@ function M._sink(key, condidate)
     else
       -- If the vfiler object does not exist,
       -- a dummy vfiler with default settings is generated.
-      local dummy_ctx = Context.new(require('vfiler/config').configs)
-      local dummy_filer = VFiler.new(dummy_ctx)
-      dummy_filer:do_action(function(filer, context, view)
+      local dummy = new_dummy_vfiler(core.path.parent(path))
+      dummy:do_action(function(filer, context, view)
         action(filer, context, view, path)
       end)
-      dummy_filer:wipeout()
+      dummy:wipeout()
     end
   else
     core.message.error('Action "%s" is no supported.', key)
